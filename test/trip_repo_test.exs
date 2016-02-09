@@ -18,16 +18,23 @@ defmodule Triptastic.TripRepoTest do
   end
 
   test "grouping top trips by category in memory" do
-    trips = Repo.all(Trip) |> Trip.popular_by_category()
+    trips = Repo.all(Trip) |> Trip.popular_by_category
 
     assert length(trips) == 8
     assert Enum.all?(trips, &(&1.favorites > 2))
   end
 
   test "grouping top trips by category using windows" do
-    {:ok, result} = Trip.popular_over_category()
+    {:ok, result} = Trip.popular_over_category
 
     assert result.num_rows == 8
     assert Enum.all?(result.rows, &(Enum.at(&1, 3) >= 2))
+  end
+
+  test "grouping top trips by category using windows through a join" do
+    trips = Trip.popular_over_category_joined |> Repo.all
+
+    assert length(trips) == 8
+    assert Enum.all?(trips, &(&1.favorites > 2))
   end
 end

@@ -33,8 +33,9 @@ defmodule Triptastic.TripBenchmarkTest do
 
       mem = ms(fn -> Trip |> Repo.all |> Trip.popular_by_category end)
       win = ms(fn -> Trip.popular_over_category end)
+      wij = ms(fn -> Trip.popular_over_category_joined |> Repo.all end)
 
-      IO.puts "num: #{num} | mem: #{mem} | win: #{win}"
+      IO.puts "num: #{num} | mem: #{mem} | win: #{win} | wij: #{wij}"
     end
   end
 end
