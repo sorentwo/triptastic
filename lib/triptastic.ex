@@ -1,0 +1,2 @@
+defmodule Triptastic do
+end
