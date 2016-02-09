@@ -1,8 +1,6 @@
 defmodule Triptastic.Trip do
   use Ecto.Schema
 
-  import Ecto.Query
-
   @categories ~w(golf tennis badminton pickleball)
 
   schema "trips" do
@@ -13,9 +11,7 @@ defmodule Triptastic.Trip do
 
   def categories, do: @categories
 
-  def popular_by_category(trips, opts \\ []) do
-    per = Keyword.get(opts, :per, 2)
-
+  def popular_by_category(per \\ 2) do
     trips
     |> Enum.group_by(&(&1.category))
     |> Enum.flat_map(&(popular_in_subset(&1, per)))
@@ -27,16 +23,14 @@ defmodule Triptastic.Trip do
     |> Enum.take(per)
   end
 
-  def popular_over_category(opts \\ []) do
-    per = Keyword.get(opts, :per, 2)
-
-    que = """
+  def popular_over_category(per \\ 2) do
+    query = """
       SELECT * FROM (SELECT *, row_number() OVER (
         PARTITION BY category
         ORDER BY favorites DESC, name ASC
       ) FROM trips) AS t WHERE t.row_number <= $1::integer;
     """
 
-    Ecto.Adapters.SQL.query(Triptastic.Repo, que, [per])
+    Ecto.Adapters.SQL.query(Triptastic.Repo, query, [per])
   end
 end

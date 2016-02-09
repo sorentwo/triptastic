@@ -1,5 +1,7 @@
 use Mix.Config
 
+config :logger, level: :warn
+
 config :triptastic, Triptastic.Repo,
   adapter: Ecto.Adapters.Postgres,
   database: "triptastic_dev",
