@@ -1,20 +1,35 @@
 # Triptastic
 
-**TODO: Add description**
+An Ecto 2.0 sample application that compares naive filtering and window queries.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+Clone the repository and then follow these `mix` steps:
 
-  1. Add triptastic to your list of dependencies in `mix.exs`:
+```bash
+mix deps.get, ecto.create, ecto.migrate
+```
 
-        def deps do
-          [{:triptastic, "~> 0.0.1"}]
-        end
+Now you're ready to run the tests:
 
-  2. Ensure triptastic is started before your application:
+```bash
+mix test
+```
 
-        def application do
-          [applications: [:triptastic]]
-        end
+## Results
 
+Initial results in table form:
+
+```
+| trips | memory  | window |
+| ----- | ------- | ------ |
+| 100   | 2.464   | 2.129  |
+| 500   | 22.088  | 3.479  |
+| 5000  | 34.62   | 19.747 |
+| 10000 | 69.435  | 38.229 |
+| 20000 | 147.987 | 76.326 |
+```
+
+## License
+
+MIT License, Copyright (c) 2016 Parker Selbert
