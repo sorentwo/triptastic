@@ -7,7 +7,7 @@ defmodule Triptastic.TripBenchmarkTest do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Repo)
   end
 
-  def ms(fun, parent) do
+  def ms(parent, fun) do
     Task.async(fn ->
       Ecto.Adapters.SQL.Sandbox.allow(Repo, parent, self())
       begin = :os.timestamp
@@ -17,28 +17,25 @@ defmodule Triptastic.TripBenchmarkTest do
     end) |> Task.await
   end
 
-  def build(category, favorites) do
-    %{name: "#{category}-#{favorites}",
-      category: category,
-      favorites: favorites}
-  end
-
   for num <- [100, 500, 5_000, 10_000, 20_000] do
     @tag num: num
     test "compare memory and windows for #{num} trips", %{num: num} do
       categories = Stream.cycle(Trip.categories)
 
-      favorites = fn -> trunc(:rand.uniform() * 10) end
-      category = fn -> hd(Enum.take(categories, 1)) end
-      trips = for _ <- 1..num, do: build(category.(), favorites.())
+      trips = for _ <- 1..num do
+        cat = hd(Enum.take(categories, 1))
+        fav = trunc(:rand.uniform() * 10)
+
+        %{name: "#{cat}-#{fav}", category: cat, favorites: fav}
+      end
 
       Repo.insert_all(Trip, trips)
 
-      mem = ms(fn -> Trip |> Repo.all |> Trip.popular_by_category end, self())
-      win = ms(fn -> Trip.popular_over_category end, self())
-      wij = ms(fn -> Trip.popular_over_category_joined |> Repo.all end, self())
+      mem = ms(self(), fn -> Trip |> Repo.all |> Trip.popular_by_category end)
+      win = ms(self(), fn -> Trip.popular_over_category end))
+      wij = ms(self(), fn -> Trip.popular_over_category_joined |> Repo.all end)
 
-      IO.puts "num: #{num} | mem: #{mem} | win: #{win} | wij: #{wij}"
+      IO.puts "| #{num} | #{mem} | #{win} | #{wij} |"
     end
   end
 end

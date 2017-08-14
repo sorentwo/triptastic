@@ -16,7 +16,7 @@ defmodule Triptastic.Mixfile do
   end
 
   defp deps do
-    [{:ecto, github: "elixir-lang/ecto"},
-     {:postgrex, "~> 0.11"}]
+    [{:ecto, path: "/Users/pselbert/Work/Code/ecto"},
+     {:postgrex, "~> 0.11.1"}]
   end
 end
